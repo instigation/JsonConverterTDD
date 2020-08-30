@@ -5,8 +5,46 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:JsonConverterTDD"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="JsonDecoder" Height="450" Width="800">
+    <Window.Resources>
+        <HierarchicalDataTemplate x:Key="root" ItemsSource="{Binding Children}">
+        </HierarchicalDataTemplate>
+        <HierarchicalDataTemplate x:Key="intermediate" ItemsSource="{Binding Children}">
+            <TextBlock FontSize="15" Foreground="LightGoldenrodYellow" FontFamily="Consolas">
+                <TextBlock.Text>
+                    <MultiBinding StringFormat=" {0}:">
+                        <Binding Path="Property"/>
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
+        </HierarchicalDataTemplate>
+        <DataTemplate x:Key="leaf">
+            <TextBlock FontSize="15" Foreground="LightGoldenrodYellow" FontFamily="Consolas">
+                <TextBlock.Text>
+                    <MultiBinding StringFormat=" {0}: {1}">
+                        <Binding Path="Property"/>
+                        <Binding Path="ValueToString"/>
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
+        </DataTemplate>
+        <local:TemplateSelector x:Key="templateSelector" 
+                                        RootTemplate="{StaticResource root}" 
+                                        IntermediateTemplate="{StaticResource intermediate}"
+                                        LeafTemplate="{StaticResource leaf}"/>
+    </Window.Resources>
+    <StackPanel Margin="10">
+        <TextBlock FontSize="15">Enter Html Json string:</TextBlock>
+        <TextBox Background="Black" Foreground="LightGoldenrodYellow" FontFamily="Consolas" FontSize="15" Name="targetTextBox" TextChanged="targetTextBox_TextChanged"></TextBox>
+        <TextBlock FontSize="15">Parsed Json object:</TextBlock>
+        <TreeView Name="jsonTreeView" Background="Black" ItemTemplateSelector="{StaticResource templateSelector}">
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="TreeViewItem">
+                    <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
+                    <Setter Property="IsExpanded" Value="True" />
+                </Style>
+            </TreeView.ItemContainerStyle>
+        </TreeView>
+    </StackPanel>
 </Window>
